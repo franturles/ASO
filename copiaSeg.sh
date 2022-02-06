@@ -1,44 +1,52 @@
 #!/bin/bash
 clear
-echo "Creando mundo..."
-ListarUsuarios=$(getent passwd {1000..60000} | cut -d: -f1)
-HomeDeUsuarios=$(getent passwd {1000..60000} | cut -d: -f6)
+echo "Iniciando programa..."
+ListadoUsuarios=$(getent passwd {1000..60000} | cut -d: -f1,6)
 Fecha=$(date +%m-%b-%Y_%H:%M)
-if [ -d /Backups ];then
-echo "Carpeta Backups ya establecida"
+if [ -d /Backups ]
+then
+        echo "Carpeta Backups ya establecida"
 else
-echo "Carpeta Backups no establecida"
-sleep 1
-mkdir /Backups
-echo "Carpeta Backuos creada con exito"
-clear
+        echo "Carpeta Backups no establecida"
+        sleep 2
+        mkdir /Backups
+        echo "Carpeta Backups creada con exito"
+	sleep 2
+        clear
 fi
 if [ $EUID = 0 ]; then
-	echo "Vale, eres root"
-		if [ -z $1 ]
-		then
-			echo "No hay ningun parametro"
-			sleep 2
-			echo "Procediendo a la copia de seguridad de todos los usuarios"
-			sleep 2
-			for Usuario in $ListarUsuarios
-			do
-				echo "Creando copìa de $Usuario"
-				tar -cvf /Backups/$Usuario.$Fecha.tar /home/$Usuario
+        echo "Vale, eres root"
+                if [ -z $1 ]
+                then
+                        echo "No hay ningun parametro"
+                        sleep 2
+                        echo "Procediendo a la copia de seguridad de todos los usuarios"
+                        sleep 2
+                        for Usuarios in $ListadoUsuarios
+                        do
+                                Usuario=$(echo $Usuarios | cut -d: -f1)
+                                HomeDeUsuarios=$(echo $Usuarios | cut -d: -f2)
+				clear
+                                echo "Creando copia de $HomeDeUsuarios a $Usuario"
 				sleep 2
-				if [ $? = 0 ]
-				then
-					clear
-					echo "El usuario $Usuario no tiene carpeta de trabajo"
-				else
-					echo "Copia de Seguridad creada con exito"
-				fi
-				sleep 2
-			done
-		else
-			echo "El parametro es $1"
-		fi
+                                tar -cvf /Backups/$Usuario.$Fecha.tar $HomeDeUsuarios
+				echo "Copia realizada con exito"
+                                sleep 5
+                        done
+                else
+			UsuarioEs=$(getent passwd {1000..60000} | cut -d: -f1 | grep $1)
+			HomeDeUsuarioEs=$(getent passwd {1000..60000} | grep $1 | cut -d: -f6)
+			if [ -z $UsuarioEs ]
+			then
+        			echo "No existe el usuario $1"
+			else
+        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
+                                tar -cvf /Backups/$1.$Fecha.tar $HomeDeUsuarioEs
+				echo "Copia realizada con exito"
+			fi
+
+                fi
 else
-	echo "No eres root"
+        echo "No eres root"
 fi
 
