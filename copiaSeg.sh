@@ -29,8 +29,9 @@ if [ $EUID = 0 ]; then
 				clear
                                 echo "Creando copia de $HomeDeUsuarios a $Usuario"
 				sleep 2
-                                tar -cvf /Backups/$Usuario.$Fecha.tar $HomeDeUsuarios
-				echo "Copia realizada con exito"
+				mkdir /Backups/$Usuario
+                                tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $HomeDeUsuarios
+				echo "Copia de $Usuario realizada con exito"
                                 sleep 5
                         done
                 else
@@ -41,8 +42,9 @@ if [ $EUID = 0 ]; then
         			echo "No existe el usuario $1"
 			else
         			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
-                                tar -cvf /Backups/$1.$Fecha.tar $HomeDeUsuarioEs
-				echo "Copia realizada con exito"
+				mkdir /Backups/$1
+                                tar -cvf /Backups/$1/$1.$Fecha.tar $HomeDeUsuarioEs
+				echo "Copia de $1 realizada con exito"
 			fi
 
                 fi
