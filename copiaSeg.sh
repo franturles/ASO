@@ -17,7 +17,7 @@ fi
 if [ $EUID = 0 ]
 then
         echo "Vale, eres root"
-                if [ -z $1 ]
+                if [ $# = 0 ]
                 then
                         echo "No hay ningun parametro"
                         sleep 2
@@ -41,6 +41,8 @@ then
                 			echo "Ningun fichero configurable detectado"
 					sleep 3
 					echo "Siguiendo con la ejecucion del programa"
+					sleep 2
+					clear
 			        fi
 
                                 echo "Creando copia de $HomeDeUsuarios a $Usuario"
@@ -50,34 +52,43 @@ then
 				echo "Copia de $Usuario realizada con exito"
                                 sleep 5
                         done
-                else
-			UsuarioEs=$(getent passwd {1000..60000} | cut -d: -f1 | grep $1)
-			HomeDeUsuarioEs=$(getent passwd {1000..60000} | grep $1 | cut -d: -f6)
-			if [ -z $UsuarioEs ]
+                elif [ $# > 2 ]
+		then
+			if [ $1 = -u ]
 			then
-        			echo "No existe el usuario $1"
+				UsuarioEs=$(getent passwd {1000..60000} | cut -d: -f1 | grep $2)
+				HomeDeUsuarioEs=$(getent passwd {1000..60000} | grep $2 | cut -d: -f6)
+				if [ -z $UsuarioEs ]
+				then
+	        			echo "No existe el usuario $2"
+				else
+					if [ -f $HomeDeUsuarioEs/.copiaSeg.dar ]
+	                                then
+	                                        echo "Detectado fichero configurable en $HomeDeUsuarioEs"
+	                                        for var in $HomeDeUsuarioEs/.copiaSeg.dar
+	                                        do
+	                                        Linea1=$(cat $HomeDeUsuarioEs/.copiaSeg.dar)
+						cat $var
+	                                        done
+	                                        sleep 5
+
+	                                else
+	                                        echo "Ningun fichero configurable detectado en $HomeDeUsuarioEs"
+	                                        sleep 3
+	                                        echo "Siguiendo con la ejecucion del programa"
+						sleep 2
+						clear
+	                                fi
+
+
+	        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
+					sleep 2
+					mkdir /Backups/$2
+	                                tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs
+					echo "Copia de $2 realizada con exito"
+				fi
 			else
-				if [ -f $HomeDeUsuarioEs/.copiaSeg.dar ]
-                                then
-                                        echo "Detectado fichero"
-                                        for var in $HomeDeUsuarioEs/.copiaSeg.dar
-                                        do
-                                        Linea1=$(cat $HomeDeUsuarioEs/.copiaSeg.dar)
-					cat $var
-                                        done
-                                        sleep 5
-
-                                else
-                                        echo "Ningun fichero configurable detectado"
-                                        sleep 3
-                                        echo "Siguiendo con la ejecucion del programa"
-                                fi
-
-
-        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
-				mkdir /Backups/$1
-                                tar -cvf /Backups/$1/$1.$Fecha.tar $HomeDeUsuarioEs
-				echo "Copia de $1 realizada con exito"
+				echo "El primer parametro es -u"
 			fi
 
                 fi
