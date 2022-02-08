@@ -14,7 +14,8 @@ else
 	sleep 2
         clear
 fi
-if [ $EUID = 0 ]; then
+if [ $EUID = 0 ]
+then
         echo "Vale, eres root"
                 if [ -z $1 ]
                 then
@@ -27,6 +28,21 @@ if [ $EUID = 0 ]; then
                                 Usuario=$(echo $Usuarios | cut -d: -f1)
                                 HomeDeUsuarios=$(echo $Usuarios | cut -d: -f2)
 				clear
+				if [ -f $HomeDeUsuarios/.copiaSeg.dar ]
+        			then
+					echo "Detectado fichero"
+					for var in $HomeDeUsuarios/.copiaSeg.dar
+					do
+					Linea1=$(cat $HomeDeUsuarios/.copiaSeg.dar)
+					cat $var
+					done
+                			sleep 5
+        			else
+                			echo "Ningun fichero configurable detectado"
+					sleep 3
+					echo "Siguiendo con la ejecucion del programa"
+			        fi
+
                                 echo "Creando copia de $HomeDeUsuarios a $Usuario"
 				sleep 2
 				mkdir /Backups/$Usuario
@@ -41,6 +57,23 @@ if [ $EUID = 0 ]; then
 			then
         			echo "No existe el usuario $1"
 			else
+				if [ -f $HomeDeUsuarioEs/.copiaSeg.dar ]
+                                then
+                                        echo "Detectado fichero"
+                                        for var in $HomeDeUsuarioEs/.copiaSeg.dar
+                                        do
+                                        Linea1=$(cat $HomeDeUsuarioEs/.copiaSeg.dar)
+					cat $var
+                                        done
+                                        sleep 5
+
+                                else
+                                        echo "Ningun fichero configurable detectado"
+                                        sleep 3
+                                        echo "Siguiendo con la ejecucion del programa"
+                                fi
+
+
         			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
 				mkdir /Backups/$1
                                 tar -cvf /Backups/$1/$1.$Fecha.tar $HomeDeUsuarioEs
@@ -51,4 +84,5 @@ if [ $EUID = 0 ]; then
 else
         echo "No eres root"
 fi
+
 
