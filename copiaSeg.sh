@@ -30,15 +30,15 @@ then
 				clear
 				if [ -f $HomeDeUsuarios/.copiaSeg.dar ]
         			then
-					echo "Detectado fichero"
-					for var in $HomeDeUsuarios/.copiaSeg.dar
-					do
-					Linea1=$(cat $HomeDeUsuarios/.copiaSeg.dar)
-					cat $var
-					done
-                			sleep 5
+					echo "Detectado fichero configurable en $HomeDeUsuarios"
+					FicheroOculto=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar)
+                                        NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar | head -n1 | cut -d= -f2)
+                                        Directorios=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar | tail -n1 | cut -d= -f2)
+                                        echo "Se va a realizar $NumeroDeCopias copias de $Directorios"
+                                        sleep 5
+
         			else
-                			echo "Ningun fichero configurable detectado"
+                			echo "Ningun fichero configurable detectado en $HomeDeUsuarios"
 					sleep 3
 					echo "Siguiendo con la ejecucion del programa"
 					sleep 2
@@ -64,12 +64,12 @@ then
 				else
 					if [ -f $HomeDeUsuarioEs/.copiaSeg.dar ]
 	                                then
+						IFS=$'\n'
 	                                        echo "Detectado fichero configurable en $HomeDeUsuarioEs"
-	                                        for var in $HomeDeUsuarioEs/.copiaSeg.dar
-	                                        do
-	                                        Linea1=$(cat $HomeDeUsuarioEs/.copiaSeg.dar)
-						cat $var
-	                                        done
+						FicheroOculto=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar)
+						NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | head -n1 | cut -d= -f2)
+						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2)
+						echo "Se va a realizar $NumeroDeCopias copias de $Directorios"
 	                                        sleep 5
 
 	                                else
@@ -78,14 +78,12 @@ then
 	                                        echo "Siguiendo con la ejecucion del programa"
 						sleep 2
 						clear
-	                                fi
-
-
-	        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
-					sleep 2
-					mkdir /Backups/$2
-	                                tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs
-					echo "Copia de $2 realizada con exito"
+		        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
+						sleep 2
+						mkdir /Backups/$2
+		                                tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs
+						echo "Copia de $2 realizada con exito"
+					fi
 				fi
 			else
 				echo "El primer parametro es -u"
