@@ -43,14 +43,14 @@ then
 					echo "Siguiendo con la ejecucion del programa"
 					sleep 2
 					clear
-			        fi
+	                                echo "Creando copia de $HomeDeUsuarios a $Usuario"
+					sleep 2
+					mkdir /Backups/$Usuario
+                        	        tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $HomeDeUsuarios
+					echo "Copia de $Usuario realizada con exito"
+                                	sleep 5
 
-                                echo "Creando copia de $HomeDeUsuarios a $Usuario"
-				sleep 2
-				mkdir /Backups/$Usuario
-                                tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $HomeDeUsuarios
-				echo "Copia de $Usuario realizada con exito"
-                                sleep 5
+			        fi
                         done
                 elif [ $# > 2 ]
 		then
@@ -68,9 +68,12 @@ then
 	                                        echo "Detectado fichero configurable en $HomeDeUsuarioEs"
 						FicheroOculto=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar)
 						NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | head -n1 | cut -d= -f2)
-						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2)
-						echo "Se va a realizar $NumeroDeCopias copias de $Directorios"
-	                                        sleep 5
+						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2 | tr ":")
+						Archivos=$(echo $Directorios | tr ":")
+						echo $Directorios
+						echo "Haciendo copia de los siguientes directorios: $Directorios"
+						#while [ "$number" -le "" ]
+						#echo tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs/$Directorios
 
 	                                else
 	                                        echo "Ningun fichero configurable detectado en $HomeDeUsuarioEs"
