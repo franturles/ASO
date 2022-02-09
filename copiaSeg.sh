@@ -64,16 +64,20 @@ then
 				else
 					if [ -f $HomeDeUsuarioEs/.copiaSeg.dar ]
 	                                then
-						IFS=$'\n'
+						#IFS=$'\n'
 	                                        echo "Detectado fichero configurable en $HomeDeUsuarioEs"
 						FicheroOculto=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar)
 						NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | head -n1 | cut -d= -f2)
-						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2 | tr ":")
-						Archivos=$(echo $Directorios | tr ":")
-						echo $Directorios
+						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2 | tr ":" " ")
 						echo "Haciendo copia de los siguientes directorios: $Directorios"
-						#while [ "$number" -le "" ]
-						#echo tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs/$Directorios
+						for Directorio in $Directorios
+						do
+							rm Datos.txt 2>/dev/null
+							BusquedaDir=$(find $HomeDeUsuarioEs -name $Directorio)
+							echo $BusquedaDir >> Datos.txt
+						done
+						#Linea=$(cat Datos.txt)
+						echo tar -cvf /Backups/$2/$2.$Fecha.tar $Linea
 
 	                                else
 	                                        echo "Ningun fichero configurable detectado en $HomeDeUsuarioEs"
