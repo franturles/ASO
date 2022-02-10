@@ -33,9 +33,26 @@ then
 					echo "Detectado fichero configurable en $HomeDeUsuarios"
 					FicheroOculto=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar)
                                         NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar | head -n1 | cut -d= -f2)
-                                        Directorios=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar | tail -n1 | cut -d= -f2)
-                                        echo "Se va a realizar $NumeroDeCopias copias de $Directorios"
-                                        sleep 5
+                                        Directorios=$(grep ^[^#] $HomeDeUsuarios/.copiaSeg.dar | tail -n1 | cut -d= -f2 | tr ":" " ")
+					if [ -z "$Directorios" ]
+                                        then
+                                                echo "El campo contenido esta vacio"
+                                        else
+						echo "Haciendo copia de los siguientes directorios: $Directorios"
+                                        	rm Datos.txt 2>/dev/null
+
+                                        	for Directorio in $Directorios
+                                        	do
+                                        		BusquedaDir=$(find $HomeDeUsuarios -name $Directorio)
+							echo $Directorios
+                                                	echo $BusquedaDir &>>Datos.txt
+                                        	done
+                                        	Linea=$(cat Datos.txt)
+                                        	mkdir /Backups/$Usuario
+                                        	tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $Linea
+						rm Datos.txt 2>/dev/null
+                                        	sleep 5
+					fi
 
         			else
                 			echo "Ningun fichero configurable detectado en $HomeDeUsuarios"
@@ -69,15 +86,22 @@ then
 						FicheroOculto=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar)
 						NumeroDeCopias=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | head -n1 | cut -d= -f2)
 						Directorios=$(grep ^[^#] $HomeDeUsuarioEs/.copiaSeg.dar | tail -n1 | cut -d= -f2 | tr ":" " ")
-						echo "Haciendo copia de los siguientes directorios: $Directorios"
-						for Directorio in $Directorios
-						do
+						if [ -z "$Directorios" ]
+						then
+							echo "El campo contenido esta vacio"
+						else
+							echo "Haciendo copia de los siguientes directorios: $Directorios"
 							rm Datos.txt 2>/dev/null
-							BusquedaDir=$(find $HomeDeUsuarioEs -name $Directorio)
-							echo $BusquedaDir >> Datos.txt
-						done
-						#Linea=$(cat Datos.txt)
-						echo tar -cvf /Backups/$2/$2.$Fecha.tar $Linea
+							for Directorio in $Directorios
+							do
+								BusquedaDir=$(find $HomeDeUsuarioEs -name $Directorio)
+								echo $BusquedaDir &>>Datos.txt
+							done
+								Linea=$(cat Datos.txt)
+								rm Datos.txt 2>/dev/null
+								mkdir /Backups/$2
+								tar -cvf /Backups/$2/$2.$Fecha.tar $Linea
+						fi
 
 	                                else
 	                                        echo "Ningun fichero configurable detectado en $HomeDeUsuarioEs"
