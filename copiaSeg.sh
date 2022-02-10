@@ -48,7 +48,7 @@ then
                                                 	echo $BusquedaDir &>>Datos.txt
                                         	done
                                         	Linea=$(cat Datos.txt)
-                                        	mkdir /Backups/$Usuario
+                                        	mkdir /Backups/$Usuario 2>/dev/null
                                         	tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $Linea
 						rm Datos.txt 2>/dev/null
                                         	sleep 5
@@ -62,7 +62,7 @@ then
 					clear
 	                                echo "Creando copia de $HomeDeUsuarios a $Usuario"
 					sleep 2
-					mkdir /Backups/$Usuario
+					mkdir /Backups/$Usuario 2>/dev/null
                         	        tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $HomeDeUsuarios
 					echo "Copia de $Usuario realizada con exito"
                                 	sleep 5
@@ -99,7 +99,7 @@ then
 							done
 								Linea=$(cat Datos.txt)
 								rm Datos.txt 2>/dev/null
-								mkdir /Backups/$2
+								mkdir /Backups/$2 2>/dev/null
 								tar -cvf /Backups/$2/$2.$Fecha.tar $Linea
 						fi
 
@@ -111,7 +111,7 @@ then
 						clear
 		        			echo "Creando copia de $HomeDeUsuarioEs a $UsuarioEs"
 						sleep 2
-						mkdir /Backups/$2
+						mkdir /Backups/$2 2>/dev/null
 		                                tar -cvf /Backups/$2/$2.$Fecha.tar $HomeDeUsuarioEs
 						echo "Copia de $2 realizada con exito"
 					fi
