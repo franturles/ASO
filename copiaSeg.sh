@@ -51,6 +51,28 @@ then
                                         	mkdir /Backups/$Usuario 2>/dev/null
                                         	tar -cvf /Backups/$Usuario/$Usuario.$Fecha.tar $Linea
 						rm Datos.txt 2>/dev/null
+						clear
+						echo "Realizando comprobacion de copias en el directorio /Backups/$Usuario"
+						sleep 3
+                                                ContadorDir=$(ls /Backups/$Usuario | wc -l)
+                                                                if [ "$NumeroDeCopias" -lt "$ContadorDir" ]
+                                                                then
+                                                                        echo "hay que borrar directorios"
+                                                                        while [ "$NumeroDeCopias" -lt "$ContadorDir" ]
+                                                                        do
+                                                                                ListarViejos=$(ls -tr /Backups/$Usuario)
+                                                                                for var in $ListarViejos
+                                                                                do
+                                                                                        echo "Borrado $var"
+                                                                                        rm -r /Backups/$Usuario/$var
+                                                                                        ContadorDir=$(ls /Backups/$Usuario | wc -l)
+                                                                                        break
+                                                                                done
+                                                                        done
+                                                                else
+                                                                        echo "No hay nada que borrar"
+                                                                fi
+
                                         	sleep 5
 					fi
 
@@ -101,6 +123,28 @@ then
 								rm Datos.txt 2>/dev/null
 								mkdir /Backups/$2 2>/dev/null
 								tar -cvf /Backups/$2/$2.$Fecha.tar $Linea
+								clear
+								echo "Realizando comprobacion de copias en el directorio /Backups/$2"
+								sleep 3
+								ContadorDir=$(ls /Backups/$2 | wc -l)
+								if [ "$NumeroDeCopias" -lt "$ContadorDir" ]
+								then
+									echo "hay que borrar directorios"
+									while [ "$NumeroDeCopias" -lt "$ContadorDir" ]
+									do
+										ListarViejos=$(ls -tr /Backups/$2)
+							                        for var in $ListarViejos
+                        							do
+                                							echo "Borrado $var"
+                                							rm -r /Backups/$2/$var
+                                							ContadorDir=$(ls /Backups/$2 | wc -l)
+                                							break
+                        							done
+									done
+								else
+									echo "No hay nada que borrar"
+								fi
+
 						fi
 
 	                                else
@@ -124,5 +168,3 @@ then
 else
         echo "No eres root"
 fi
-
-
