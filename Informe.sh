@@ -30,14 +30,42 @@ then
 		then
 			echo "No existe ese usuario"
 		else
+			NumFicherosProEs=$(ls -l /home/$UsuarioEs | cut -d" " -f2)
 			echo "Existe el usuario $UsuarioEs"
+			echo "#################################################"
+	                echo "Usuario:$UsuarioEs"
+	                echo "Nº Ficheros de los que es propietario:$NumFicherosProEs "
+	                echo "Nº Ficheros que puede modificar:"
+	                echo "Nº Ficheros abiertos:"
+	                echo "Ficheros más antiguo del usuario:"
+	                echo "Fichero más recientemente modificado:"
+	                echo "Tamaño fichero más pequeño:"
+	                echo "Tamaño medio de fichero:"
+	                echo "Tamaño fichero más grande:"
+	                echo "Tipo de fichero más usual:"
+	                echo "#################################################"
+	                read pause
+
 		fi
 	elif [ $1 = -c ]
 	then
-		UsuariosConectado=$(who | cut -d" " -f1)
-		for var in $UsuariosConectados
+		UsuariosConectados=$(who | cut -d" " -f1)
+		for UsuarioConectado in $UsuariosConectados
 		do
-			echo "El usuario $var esta conectado"
+			echo "#################################################"
+                        echo "Usuario:$UsuarioConectado"
+                        echo "Nº Ficheros de los que es propietario:"
+                        echo "Nº Ficheros que puede modificar:"
+                        echo "Nº Ficheros abiertos:"
+                        echo "Ficheros más antiguo del usuario:"
+                        echo "Fichero más recientemente modificado:"
+                        echo "Tamaño fichero más pequeño:"
+                        echo "Tamaño medio de fichero:"
+                        echo "Tamaño fichero más grande:"
+                        echo "Tipo de fichero más usual:"
+                        echo "#################################################"
+                        read pause
+
 			sleep 2
 		done
 	fi
