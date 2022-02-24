@@ -11,21 +11,21 @@ then
 		HomeUsuarios=$(echo $Usuarios| cut -d: -f2)
 		NumeroFicherosPro=$(find $HomeUsuarios -user $Usuario | wc -l)
 		NumeroFicherosMod=$(find $HomeUsuarios -user $Usuario -perm -u+w | wc -l)
-		NumeroFicherosAb=$( lsof -u $Usuario | wc -l)
+		NumeroFicherosAb=$( lsof -u $Usuario 2> /dev/null | wc -l)
 		FicheroAntiguo=$(ls $HomeUsuarios -tr -R | head -n2 | tail -n 1)
 		FicheroMasReciente=$(ls $HomeUsuarios -t -R | head -n2 | tail -n 1)
 		FicheroMasPequeño=$(ls -s -R $HomeUsuarios | head -n3 | tail -n1)
-		FicheroMasPesado=$(du /home/clientel/ | sort -n -r | head -n3 )
+		FicheroMasPesado=$(du $HomeUsuarios | sort -n -r | head -n3 )
 		echo "#################################################"
 		echo "Usuario:$Usuario"
 		echo "Nº Ficheros de los que es propietario:$NumeroFicherosPro"
 		echo "Nº Ficheros que puede modificar:$NumeroFicherosMod"
-		echo "Nº Ficheros abiertos:"
+		echo "Nº Ficheros abiertos:$NumeroFicherosAb"
 		echo "Ficheros más antiguo del usuario: $FicheroAntiguo "
 		echo "Fichero más recientemente modificado: $FicheroMasReciente"
 		echo "Tamaño fichero más pequeño: $FicheroMasPequeño"
 		echo "Tamaño medio de fichero:"
-		echo "Tamaño fichero más grande:"
+		echo "Tamaño fichero más grande:$FicheroMasPesado"
 		echo "Tipo de fichero más usual:"
 		echo "#################################################"
 		read pause
@@ -35,14 +35,14 @@ then
 	if [ $1 = -u ]
 	then
 		UsuarioEs=$(getent passwd {1000..60000} | cut -d: -f1 | grep -o "$2" | uniq)
-		HomeUsuarios=$(echo $Usuarios| cut -d: -f2)
-                NumeroFicherosPro=$(find $HomeUsuarios -user $Usuario | wc -l)
-                NumeroFicherosMod=$(find $HomeUsuarios -user $Usuario -perm -u+w | wc -l)
-                NumeroFicherosAb=$( lsof -u $Usuario | wc -l)
-                FicheroAntiguo=$(ls $HomeUsuarios -tr -R | head -n2 | tail -n 1)
-                FicheroMasReciente=$(ls $HomeUsuarios -t -R | head -n2 | tail -n 1)
-                FicheroMasPequeño=$(ls -s -R $HomeUsuarios | head -n3 | tail -n1)
-                FicheroMasPesado=$(du /home/clientel/ | sort -n -r | head -n3 )
+		HomeUsuariosEs=$(getent passwd {1000..60000} | grep "$2" | cut -d: -f6)
+                NumeroFicherosPro=$(find $HomeUsuariosEs -user $UsuarioEs | wc -l)
+                NumeroFicherosMod=$(find $HomeUsuariosEs -user $UsuarioEs -perm -u+w | wc -l)
+                NumeroFicherosAb=$( lsof -u $UsuarioEs | wc -l)
+                FicheroAntiguo=$(ls $HomeUsuariosEs -tr -R | head -n2 | tail -n 1)
+                FicheroMasReciente=$(ls $HomeUsuariosEs -t -R | head -n2 | tail -n 1)
+                FicheroMasPequeño=$(ls -s -R $HomeUsuariosEs | head -n3 | tail -n1)
+                FicheroMasPesado=$(du $HomeUsuariosEs | sort -n -r | head -n3 )
 
 		if [ -z $UsuarioEs ]
 		then
@@ -53,13 +53,13 @@ then
 			echo "#################################################"
 	                echo "Usuario:$UsuarioEs"
 	                echo "Nº Ficheros de los que es propietario:$NumFicherosProEs "
-	                echo "Nº Ficheros que puede modificar:"
-	                echo "Nº Ficheros abiertos:"
-	                echo "Ficheros más antiguo del usuario:"
-	                echo "Fichero más recientemente modificado:"
-	                echo "Tamaño fichero más pequeño:"
+	                echo "Nº Ficheros que puede modificar:$NumeroFicherosMod"
+	                echo "Nº Ficheros abiertos:$NumeroFicherosAb "
+	                echo "Ficheros más antiguo del usuario:$FicheroAntiguo"
+	                echo "Fichero más recientemente modificado:$FicheroMasReciente"
+	                echo "Tamaño fichero más pequeño:$FicheroMasPequeño"
 	                echo "Tamaño medio de fichero:"
-	                echo "Tamaño fichero más grande:"
+	                echo "Tamaño fichero más grande:$FicheroMasPesado"
 	                echo "Tipo de fichero más usual:"
 	                echo "#################################################"
 	                read pause
@@ -70,16 +70,25 @@ then
 		UsuariosConectados=$(who | cut -d" " -f1)
 		for UsuarioConectado in $UsuariosConectados
 		do
+                	HomeUsuariosCo=$(getent passwd {1000..60000} | grep "$UsuarioConectado" | cut -d: -f6)
+                	NumeroFicherosPro=$(find $HomeUsuariosCo -user $UsuarioCo | wc -l)
+               		NumeroFicherosMod=$(find $HomeUsuariosCo -user $UsuarioCo -perm -u+w | wc -l)
+               		NumeroFicherosAb=$( lsof -u $UsuarioCo | wc -l)
+                	FicheroAntiguo=$(ls $HomeUsuariosCo -tr -R | head -n2 | tail -n 1)
+                	FicheroMasReciente=$(ls $HomeUsuariosCo -t -R | head -n2 | tail -n 1)
+        	        FicheroMasPequeño=$(ls -s -R $HomeUsuariosCo | head -n3 | tail -n 1)
+	                FicheroMasPesado=$(du $HomeUsuariosCo | sort -n -r | head -n3 )
+
 			echo "#################################################"
                         echo "Usuario:$UsuarioConectado"
-                        echo "Nº Ficheros de los que es propietario:"
-                        echo "Nº Ficheros que puede modificar:"
-                        echo "Nº Ficheros abiertos:"
-                        echo "Ficheros más antiguo del usuario:"
-                        echo "Fichero más recientemente modificado:"
-                        echo "Tamaño fichero más pequeño:"
+                        echo "Nº Ficheros de los que es propietario:$NumeroFicherosPro"
+                        echo "Nº Ficheros que puede modificar:$NumeroFicherosMod"
+                        echo "Nº Ficheros abiertos:$NumeroFicherosAb "
+                        echo "Ficheros más antiguo del usuario:$FicheroAntiguo"
+                        echo "Fichero más recientemente modificado:$FicheroMasReciente"
+                        echo "Tamaño fichero más pequeño:$FicheroMasPequeño"
                         echo "Tamaño medio de fichero:"
-                        echo "Tamaño fichero más grande:"
+                        echo "Tamaño fichero más grande:$FicheroMasPesado"
                         echo "Tipo de fichero más usual:"
                         echo "#################################################"
                         read pause
