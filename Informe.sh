@@ -11,10 +11,11 @@ then
 		HomeUsuarios=$(echo $Usuarios| cut -d: -f2)
 		NumeroFicherosPro=$(find $HomeUsuarios -user $Usuario | wc -l)
 		NumeroFicherosMod=$(find $HomeUsuarios -user $Usuario -perm -u+w | wc -l)
-		#NumeroFicherosAb=$( ps -u $Usuario | grep nano | wc -l)
+		NumeroFicherosAb=$( lsof -u $Usuario | wc -l)
 		FicheroAntiguo=$(ls $HomeUsuarios -tr -R | head -n2 | tail -n 1)
 		FicheroMasReciente=$(ls $HomeUsuarios -t -R | head -n2 | tail -n 1)
 		FicheroMasPequeño=$(ls -s -R $HomeUsuarios | head -n3 | tail -n1)
+		FicheroMasPesado=$(du /home/clientel/ | sort -n -r | head -n3 )
 		echo "#################################################"
 		echo "Usuario:$Usuario"
 		echo "Nº Ficheros de los que es propietario:$NumeroFicherosPro"
@@ -34,6 +35,15 @@ then
 	if [ $1 = -u ]
 	then
 		UsuarioEs=$(getent passwd {1000..60000} | cut -d: -f1 | grep -o "$2" | uniq)
+		HomeUsuarios=$(echo $Usuarios| cut -d: -f2)
+                NumeroFicherosPro=$(find $HomeUsuarios -user $Usuario | wc -l)
+                NumeroFicherosMod=$(find $HomeUsuarios -user $Usuario -perm -u+w | wc -l)
+                NumeroFicherosAb=$( lsof -u $Usuario | wc -l)
+                FicheroAntiguo=$(ls $HomeUsuarios -tr -R | head -n2 | tail -n 1)
+                FicheroMasReciente=$(ls $HomeUsuarios -t -R | head -n2 | tail -n 1)
+                FicheroMasPequeño=$(ls -s -R $HomeUsuarios | head -n3 | tail -n1)
+                FicheroMasPesado=$(du /home/clientel/ | sort -n -r | head -n3 )
+
 		if [ -z $UsuarioEs ]
 		then
 			echo "No existe ese usuario"
