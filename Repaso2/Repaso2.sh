@@ -1,11 +1,14 @@
 #!/bin/bash
 clear
-archivo=$(cat $1)
-archivoOrdenado=$(sort -r $1 | head -n 4)
 Contador=0
-if [ $# -ge 1 ]
-        then
+ListadoUsuarios=$(getent passwd {1000..60000} | cut -d: -f1)
+
+if [ $# -eq 1 ] && [ -f $1 ]
+then
+	archivo=$(cat $1)
+	archivoOrdenado=$(sort -r $1 | head -n 4)
 	echo "Fichero detectado"
+	sleep 1
 	clear
 	echo "Selecciona una de estas opciones:"
 	echo "1.Crear los usuarios con contraseña abc123."
@@ -19,8 +22,15 @@ if [ $# -ge 1 ]
 		for Usuario in $archivo
 		do
 			sudo useradd -m -s /bin/bash $Usuario -p abc123. 2>/dev/null
-			echo "Creado con exito el usuario $Usuario"
-			sleep 2
+			if [ $? -ne 0 ]
+			then
+        			echo "Ya existe el usuario $Usuario"
+				sleep 2
+
+			else
+        			echo "Creado con exito el usuario $Usuario"
+				sleep 2
+			fi
 		done
 		break
 		;;
@@ -28,10 +38,16 @@ if [ $# -ge 1 ]
 		2) echo "Creaccion limitada"
 		for Usuario in $archivoOrdenado
                 do
-                        sudo useradd -m -s /bin/bash $Usuario -p abc123. 2>/dev/null
-                        echo "Creado con exito el usuario $Usuario"
-                        sleep 2
+			sudo useradd -m -s /bin/bash $Usuario -p abc123. 2>/dev/null
+			if [ $? -ne 0 ]
+                        then
+                                echo "Ya existe el usuario $Usuario"
+                                sleep 2
 
+                        else
+                                echo "Creado con exito el usuario $Usuario"
+                                sleep 2
+                        fi
                 done
 		break
 		;;
@@ -44,7 +60,7 @@ if [ $# -ge 1 ]
 		else
 			echo "Grupo IES no encontrado"
 			sleep 2
-			echo "Creado con exito"
+			echo "Creado con exito el grupo IES"
 		fi
 
 		for Usuario in $archivo
@@ -52,14 +68,30 @@ if [ $# -ge 1 ]
 			Contador=$((Contador+1))
 			if [ $Contador -le 2 ]
 			then
-                     		sudo useradd -m -s /bin/bash $Usuario -p abc123. -G IES 2>/dev/null
-				echo "Creado con exito el usuario $Usuario para el grupo IES"
+		     		sudo useradd -m -s /bin/bash $Usuario -p abc123. -G IES 2>/dev/null
+	                        if [ $? -ne 0 ]
+        	                then
+                	                echo "Ya existe el usuario $Usuario"
+                        	        sleep 2
+
+                       		else
+                                	echo "Creado con exito el usuario $Usuario para el grupo IES"
+                                	sleep 2
+                        	fi
+
 			else
 				sudo useradd -m -s /bin/bash $Usuario -p abc123. 2>/dev/null
-				sudo passwd -l $Usuario > /dev/null 2>&1
-				echo "Creado con exito usuario normal $Usuario"
+	                        if [ $? -ne 0 ]
+	                        then
+	                                echo "Ya existe el usuario $Usuario"
+	                                sleep 2
+
+	                        else
+	                                echo "Creado con exito el usuario $Usuario"
+	                                sleep 2
+	                        fi
+					sudo passwd -l $Usuario > /dev/null 2>&1
 			fi
-                        sleep 2
 
                 done
 		break
@@ -67,9 +99,8 @@ if [ $# -ge 1 ]
 	esac
 	done
 
-elif [ $# -le 0 ]
-then
-	clear
-	echo "Tiene que pasar un fichero"
+else
+	echo "Tiene que pasar solo un fichero"
+	sleep 1
 fi
 
